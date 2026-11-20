@@ -48,6 +48,27 @@ export function useSite() {
   const [touch, setTouch] = useState(false);
   useEffect(() => { setTouch(window.matchMedia("(hover: none)").matches); }, []);
 
+  // What we buy: the bracketed word moves to the next category as the section passes through the screen
+  // (handbags as it arrives, watches once its middle passes 85% down the screen, jewellery once it passes halfway); a click still picks one until the next band.
+  useEffect(() => {
+    const buy = rootRef.current?.querySelector<HTMLElement>(".buy");
+    if (!buy) return;
+    let raf = 0, last = -1;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const vh = window.innerHeight, r = buy.getBoundingClientRect();
+        const c = r.top + r.height / 2;
+        const i = c > vh * 0.85 ? 0 : c > vh * 0.5 ? 1 : 2;
+        if (i !== last) { last = i; setCat(i); }
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+
   // The loupe follows the pointer (or a finger) and magnifies the photo 2.4x; it rests on the dial otherwise.
   useEffect(() => {
     const lens = rootRef.current?.querySelector<HTMLElement>(".lens");
