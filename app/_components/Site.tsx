@@ -81,13 +81,15 @@ export function Site() {
     </ol>
   </section>
 
+  <div className="buy-track">
   <section className="buy" id="d-buy" aria-labelledby="d-buy-h">
     <div className="bg" role="img" aria-label={v.buyAlt}><img className={v.bgCls0} src={asset("/images/cat-bags.jpg")} alt="" style={{objectPosition: "50% 62%"} as CSSProperties} /><img className={v.bgCls1} src={asset("/images/cat-watches.jpg")} alt="" style={{objectPosition: "50% 44%"} as CSSProperties} /><img className={v.bgCls2} src={asset("/images/cat-jewellery.jpg")} alt="" style={{objectPosition: "50% 30%"} as CSSProperties} /></div>
     <div className="buy-in">
-      <div className="words"><h2 className="sr" id="d-buy-h">What we buy</h2><button type="button" className={v.wCls0} aria-pressed={v.wOn0} onClick={v.pick0}><span className="b" aria-hidden="true">(</span>Handbags<span className="b" aria-hidden="true">)</span></button><button type="button" className={v.wCls1} aria-pressed={v.wOn1} onClick={v.pick1}><span className="b" aria-hidden="true">(</span>Watches<span className="b" aria-hidden="true">)</span></button><button type="button" className={v.wCls2} aria-pressed={v.wOn2} onClick={v.pick2}><span className="b" aria-hidden="true">(</span>Jewellery<span className="b" aria-hidden="true">)</span></button></div>
+      <div className="words"><h2 className="sr" id="d-buy-h">What we buy</h2><button type="button" className={v.wCls0} aria-pressed={v.wOn0} onClick={v.pick0}><span className="b" aria-hidden="true">(</span>Handbags<span className="b" aria-hidden="true">)</span></button><button type="button" className={v.wCls1} aria-pressed={v.wOn1} onClick={v.pick1}><span className="b" aria-hidden="true">(</span>Watches<span className="b" aria-hidden="true">)</span></button><button type="button" className={v.wCls2} aria-pressed={v.wOn2} onClick={v.pick2}><span className="b" aria-hidden="true">(</span>Jewellery<span className="b" aria-hidden="true">)</span></button><span className="buy-prog" aria-hidden="true"><i></i></span></div>
       <div className="buy-note"><div className={v.nCls0} aria-hidden={v.nHid0}><p>Send a few photos of your handbag on WhatsApp and we’ll reply with a valuation range, subject to authentication. The valuation is free.</p><a className="cap" href={v.waHref}><span>Ask about your handbag</span></a></div><div className={v.nCls1} aria-hidden={v.nHid1}><p>A chauffeur in white gloves collects your watch, and it’s authenticated in-house before we invite offers from our buyer network.</p><a className="cap" href={v.waHref}><span>Ask about your watch</span></a></div><div className={v.nCls2} aria-hidden={v.nHid2}><p>Fine and branded jewellery, including diamonds. If you’re not sure about a piece, send us a photo and ask.</p><a className="cap" href={v.waHref}><span>Ask about your jewellery</span></a></div></div>
     </div>
   </section>
+  </div>
 
   <section className="auth" id="d-auth" aria-labelledby="d-auth-h">
     <div className="auth-h" data-r="">

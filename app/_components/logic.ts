@@ -48,25 +48,38 @@ export function useSite() {
   const [touch, setTouch] = useState(false);
   useEffect(() => { setTouch(window.matchMedia("(hover: none)").matches); }, []);
 
-  // What we buy: the bracketed word moves to the next category as the section passes through the screen
-  // (handbags as it arrives, watches once its middle passes 85% down the screen, jewellery once it passes halfway); a click still picks one until the next band.
+  // What we buy: the band holds in place (sticky, centred) for 1.5 screens of scrolling, a half-screen per category,
+  // so nobody scrolls past it without seeing all three; --p drives the progress line. A click scrolls to that stretch.
+  const buyGo = useRef<((i: number) => void) | null>(null);
   useEffect(() => {
-    const buy = rootRef.current?.querySelector<HTMLElement>(".buy");
-    if (!buy) return;
-    let raf = 0, last = -1;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const vh = window.innerHeight, r = buy.getBoundingClientRect();
-        const c = r.top + r.height / 2;
-        const i = c > vh * 0.85 ? 0 : c > vh * 0.5 ? 1 : 2;
-        if (i !== last) { last = i; setCat(i); }
-      });
+    const track = rootRef.current?.querySelector<HTMLElement>(".buy-track");
+    const buy = track?.querySelector<HTMLElement>(".buy");
+    if (!track || !buy) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0, last = -1, run = 0, btop = 0;
+    const measure = () => {
+      raf = 0;
+      const wh = window.innerHeight, h = buy.offsetHeight, pin = wh <= 1400;
+      run = pin ? Math.round(wh * 1.5) : 0;
+      btop = pin ? Math.max(0, Math.round((wh - h) / 2)) : 0;
+      track.toggleAttribute("data-pin", pin);
+      track.style.setProperty("--run", run + "px");
+      track.style.setProperty("--btop", btop + "px");
+      const p = run ? Math.min(1, Math.max(0, (btop - track.getBoundingClientRect().top) / run)) : 0;
+      track.style.setProperty("--p", p.toFixed(3));
+      const i = run ? Math.min(2, Math.floor(p * 3)) : 0;
+      if (i !== last) { last = i; setCat(i); }
     };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure); };
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+    window.addEventListener("resize", onScroll);
+    measure();
+    buyGo.current = (i: number) => {
+      if (!run) return;
+      const y = window.scrollY + track.getBoundingClientRect().top - btop + (run * (i + 0.5)) / 3;
+      window.scrollTo({ top: Math.round(y), behavior: reduce ? "auto" : "smooth" });
+    };
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); if (raf) cancelAnimationFrame(raf); buyGo.current = null; };
   }, []);
 
   // The loupe follows the pointer (or a finger) and magnifies the photo 2.4x; it rests on the dial otherwise.
@@ -118,7 +131,7 @@ export function useSite() {
       v["wOn" + i] = on ? "true" : "false";
       v["nCls" + i] = on ? "on" : "";
       v["nHid" + i] = on ? "false" : "true";
-      v["pick" + i] = () => setCat(i);
+      v["pick" + i] = () => { setCat(i); buyGo.current?.(i); };
     }
     for (let i = 0; i < 4; i++) {
       const on = i === tab;
