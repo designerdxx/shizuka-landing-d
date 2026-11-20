@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Imbue, Albert_Sans } from "next/font/google";
+import { Albert_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { asset } from "./asset";
 import "./globals.css";
 
-const f_imbue = Imbue({ variable: "--f-imbue", subsets: ["latin"], axes: ["opsz"], display: "swap" });
+const f_gserif = localFont({ src: "./fonts/GeistSerifVF.woff2", variable: "--f-gserif", weight: "100 900", display: "swap" });
 const f_albert = Albert_Sans({ variable: "--f-albert", subsets: ["latin"], weight: ["400", "500", "600"], display: "swap" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -28,7 +29,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={`${f_imbue.variable} ${f_albert.variable}`}>
+    <html lang="en-GB" className={`${f_gserif.variable} ${f_albert.variable}`}>
       <body>{children}</body>
     </html>
   );
